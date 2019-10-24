@@ -6,23 +6,48 @@ import images from "./images.json";
 
 class App extends Component {
   state = {
-    images
+    lastClicked: [],
+    score: 0,
+    topScore: 0
   };
 
   pingImage = id => {
-    // Filter this.state.friends for friends with an id not equal to the id being removed
-    const images = this.state.images.filter(image => image.id !== id);
-    // Set this.state.friends equal to the new friends array
-    this.setState({ images });
+    const pinged = id;
+    if (this.state.lastClicked.some(element => (element === pinged))) {
+      this.handleIncorrect();
+    } else {
+      this.setState({ 
+        lastClicked: [...this.state.lastClicked, pinged], 
+        score: this.state.score + 1
+      });
+
+      if (this.state.score >= this.state.topScore) {
+        this.setState({
+          topScore: this.state.score + 1
+        });
+      }
+      this.shuffleImages();
+    }
   };
 
-  // Map over this.state.friends and render a FriendCard component for each friend object
+
+
+  shuffleImages = () => {
+    images.sort(() => Math.random() - 0.5);
+  };
+
+  handleIncorrect = () => {
+    this.setState({ lastClicked: [], score: 0});
+  };
+
   render() {
     return (
       <>
-      <Header score={0} topScore={0}>Click the images to score points,<br></br> but don't click the same image twice!</Header>
+      <Header score={this.state.score} topScore={this.state.topScore}>
+        Click the images to score points,<br></br> but don't click the same image twice!
+      </Header>
       <CardWrapper>
-        {this.state.images.map(image => (
+        {images.map(image => (
           <ImageCard
             pingImage={this.pingImage}
             id={image.id}
