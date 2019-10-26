@@ -8,7 +8,8 @@ class App extends Component {
   state = {
     lastClicked: [],
     score: 0,
-    topScore: 0
+    topScore: 0,
+    headerMessage: "Click the images to score points, \n but don't click the same image twice!"
   };
 
   pingImage = id => {
@@ -18,34 +19,34 @@ class App extends Component {
     } else {
       this.setState({ 
         lastClicked: [...this.state.lastClicked, pinged], 
-        score: this.state.score + 1
+        score: this.state.score + 1,
+        headerMessage: 'Correct!'
       });
 
-      if (this.state.score >= this.state.topScore) {
-        this.setState({
-          topScore: this.state.score + 1
-        });
-      }
+        if (this.state.score >= this.state.topScore) {
+          this.setState({
+            topScore: this.state.score + 1
+          });
+        }
       this.shuffleImages();
     }
   };
-
-
 
   shuffleImages = () => {
     images.sort(() => Math.random() - 0.5);
   };
 
   handleIncorrect = () => {
-    this.setState({ lastClicked: [], score: 0});
+    this.shuffleImages();
+    this.setState({ lastClicked: [], score: 0, headerMessage: 'Wrong!'});
   };
 
   render() {
     return (
       <>
-      <Header score={this.state.score} topScore={this.state.topScore}>
-        Click the images to score points,<br></br> but don't click the same image twice!
-      </Header>
+      <Header score={this.state.score} topScore={this.state.topScore} 
+      message={this.state.headerMessage}
+      />
       <CardWrapper>
         {images.map(image => (
           <ImageCard
